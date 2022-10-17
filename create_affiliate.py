@@ -5,12 +5,12 @@ import json
 import time
 import csv
 
-# Open CSV file, indicate the file name as the first argument of the open function)
-with open('20220906-NIHONGGOMASTERS-AffiliatePartners.csv', mode="r", encoding="utf-8-sig") as affiliate_data:
+# Open CSV file, indicate the file name as the first argument of the open function
+with open('CSV-filename.csv', mode="r", encoding="utf-8-sig") as affiliate_data:
     affiliate = csv.reader(affiliate_data)
     list_affiliate = list(affiliate)
 
-# Ask user for the affiliate ID and the API key of the company asking for commission deletion
+# Enter the API secret key of the company
 api_secret = input("Enter API secret: ")
 api_key = (api_secret, "")
 
@@ -27,6 +27,8 @@ for affiliate in list_affiliate:
         "last_name": affiliate[2],
         "paypal_email": affiliate[3]
     }
+
+    # Make the Create Affiliate API endpoint call
     resp = requests.post(url, headers=headers, data=data, auth=api_key)
     affiliates_created += 1
     print("Affiliate created: " + affiliate[0])
