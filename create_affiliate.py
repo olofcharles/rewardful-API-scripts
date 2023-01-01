@@ -5,12 +5,12 @@ import json
 import time
 import csv
 
-# Open CSV file, indicate the file name as the first argument of the open function
+# Open CSV file, indicate the file name as the first argument of the open function)
 with open('CSV-filename.csv', mode="r", encoding="utf-8-sig") as affiliate_data:
     affiliate = csv.reader(affiliate_data)
     list_affiliate = list(affiliate)
 
-# Enter the API secret key of the company
+# Ask user for the API secret of the company requesting importation
 api_secret = input("Enter API secret: ")
 api_key = (api_secret, "")
 
@@ -25,14 +25,16 @@ for affiliate in list_affiliate:
         "email": affiliate[0],
         "first_name": affiliate[1],
         "last_name": affiliate[2],
-        "paypal_email": affiliate[3]
+        "campaign_id": affiliate[3],
     }
-
-    # Make the Create Affiliate API endpoint call
     resp = requests.post(url, headers=headers, data=data, auth=api_key)
-    affiliates_created += 1
-    print("Affiliate created: " + affiliate[0])
-    time.sleep(5)
+    if resp == 200:
+        print(resp.status_code)
+        affiliates_created += 1
+        print("Affiliate created: " + affiliate[0])
+    else:
+        print(resp.status_code)
+    time.sleep(3)
 
 print("There were " + str(affiliates_created) + " affiliate accounts created.")
 
