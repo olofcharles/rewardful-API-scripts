@@ -1,0 +1,82 @@
+#!/usr/bin/env python
+
+import requests
+import json
+import csv
+
+# Ask user for the company name and the API secret of the company commission list retrieval
+company_name = str(input("Enter company name: "))
+api_secret = str(input("Enter API secret: "))
+page_number = str(input("Enter page number: "))
+
+# Convert page number to int for parameters
+page_number_int = int(page_number)
+
+# Initialize URL request variables
+# Use this line if the customer requests leads and conversions:
+parameters = (("conversion_state[]", "conversion"), ("conversion_state[]", "lead"), ("expand", "sale"), ("page", page_number_int), ("limit", 100))
+
+# Use this line if the customer requests conversions only:
+# parameters = (("expand", "affiliate"), ("conversion_state[]", "conversion"), ("page", page_number), ("limit", 100))
+
+api_key = (api_secret, "")
+
+# Get the list of referrals with a lead and conversion statuses,
+# then write an output JSON file to keep as a log.
+response = requests.get("https://api.getrewardful.com/v1/commissions", params=parameters, auth=api_key)
+json_data = response.json()
+
+with open(str(company_name) + "_comm_data.json", 'w+') as output:
+    dataformat = json.dumps(json_data, indent=2)
+    output.write(dataformat)
+
+output.close()
+
+print("Referral list JSON file created")
+
+# Open JSON file
+with open(company_name + "_comm_data.json") as json_file:
+    output_data = json.load(json_file)
+
+# Create an empty list that would catch the dictionaries of each referral data
+comm_output = []
+
+# Load the json data in variable
+comm_data = output_data["data"]
+
+# Iterate through the JSON variable and add them on a dictionary and append them to the empty list
+for data in comm_data:
+    commission = dict(Commission_ID=data["id"],
+                       Stripe_Charge_ID=data["sale"]["stripe_charge_id"],
+                       Stripe_Customer_ID=data["sale"]["referral"]["stripe_customer_id"],
+                       Customer_email=data["sale"]["referral"]["customer"]["email"],
+                       Customer_name=data["sale"]["referral"]["customer"]["name"],
+                       Charge_amount=(data["sale"]["charge_amount_cents"] / 100),
+                       Tax_amount=(data["sale"]["tax_amount_cents"] / 100),
+                       Sale_amount=(data["sale"]["sale_amount_cents"] / 100),
+                       Commission_Amount=(data["amount"] / 100),
+                       Merchant_revenue=(data["sale"]["sale_amount_cents"] / 100 - data["amount"] / 100),
+                       Currency=data["currency"],
+                       Created_at=data["created_at"],
+                       Due_at=data["due_at"],
+                       Paid_at=data["paid_at"],
+                       Affiliate_ID=data["sale"]["affiliate"]["id"],
+                       Affiliate_Name=data["sale"]["affiliate"]["first_name"] + " " + data["sale"]["affiliate"]["last_name"],
+                       Affiliate_email=data["sale"]["affiliate"]["email"],
+                       Affiliate_paypal_email=data["sale"]["affiliate"]["paypal_email"],
+                       Campaign_name=data["sale"]["affiliate"]["campaign"]["name"],
+                       )
+    comm_output.append(commission)
+
+# Generate the keys of each dictionary
+comm_keys = comm_output[0].keys()
+
+# Write the list of dictionaries into a CSV file
+with open(company_name + "_commission_data_" + page_number + ".csv", "w", newline="") as output_csv:
+    dict_writer = csv.DictWriter(output_csv, comm_keys)
+    dict_writer.writeheader()
+    dict_writer.writerows(comm_output)
+
+output_csv.close()
+
+print("Referral CSV file created")
