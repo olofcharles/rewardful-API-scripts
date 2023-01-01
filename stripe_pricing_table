@@ -1,0 +1,8 @@
+<script>
+$(document).ready(function () {
+  setTimeout(function () {
+    const referralId = Rewardful.referral;
+    $("stripe-pricing-table").attr("client-reference-id", referralId);
+  }, 2000);
+});
+</script>
