@@ -1,3 +1,4 @@
+<script>
 $(document).ready(function(){
     setTimeout(function() {
         $('a[href^="https://buy.stripe.com/"]').each(function(){
@@ -8,3 +9,4 @@ $(document).ready(function(){
           });
     }, 2000);
 });
+</script>
