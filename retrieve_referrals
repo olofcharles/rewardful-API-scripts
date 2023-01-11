@@ -15,7 +15,7 @@ file_number = str(page_number)
 # Initialize URL request variables
 
 # Use this line if the customer requests leads and conversions:
-parameters = (("affiliate_id", "ACTUAL_AFFILIATE_ID"), ("expand", "affiliate"), ("conversion_state[]", "conversion"), ("conversion_state[]", "lead"), ("page", page_number), ("limit", 100))
+parameters = (("expand", "affiliate"), ("conversion_state[]", "conversion"), ("conversion_state[]", "lead"), ("page", page_number), ("limit", 100))
 
 # Use this line if the customer requests conversions only:
 # parameters = (("expand", "affiliate"), ("conversion_state[]", "conversion"), ("page", page_number), ("limit", 100))
