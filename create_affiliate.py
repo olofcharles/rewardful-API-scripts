@@ -6,12 +6,13 @@ import time
 import csv
 
 # Open CSV file, indicate the file name as the first argument of the open function
-with open('filename.csv', mode="r", encoding="utf-8-sig") as affiliate_data:
+with open('20230519-TEAMBYTHEMINUTE-Affiliates-import.csv', mode="r", encoding="utf-8-sig") as affiliate_data:
     affiliates = csv.reader(affiliate_data)
     list_affiliate = list(affiliates)
 
 # Ask user for the affiliate ID and the API key of the company asking for commission deletion
 api_secret = input("Enter API secret: ")
+pause = int(input("How many seconds to pause?: "))
 api_key = (api_secret, "")
 
 headers = CaseInsensitiveDict()
@@ -35,11 +36,12 @@ for affiliate in list_affiliate:
         print("Response: " + str(status))
         affiliates_created += 1
         print("Affiliate created: " + affiliate[0])
+        print("Total of " + str(affiliates_created) + " affiliate(s) created.")
     else:
-        print(status)
+        print("Response: " + str(status))
         print("Affiliate NOT created: " + affiliate[0])
-    print("Pausing for 2 seconds")
-    time.sleep(2)
+    print("Pausing for " + str(pause)+ " seconds")
+    time.sleep(pause)
 
 print("There were " + str(affiliates_created) + " affiliate accounts created.")
 
