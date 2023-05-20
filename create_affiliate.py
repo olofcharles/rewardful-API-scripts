@@ -6,7 +6,7 @@ import time
 import csv
 
 # Open CSV file, indicate the file name as the first argument of the open function
-with open('20230519-TEAMBYTHEMINUTE-Affiliates-import.csv', mode="r", encoding="utf-8-sig") as affiliate_data:
+with open('filename-import.csv', mode="r", encoding="utf-8-sig") as affiliate_data:
     affiliates = csv.reader(affiliate_data)
     list_affiliate = list(affiliates)
 
