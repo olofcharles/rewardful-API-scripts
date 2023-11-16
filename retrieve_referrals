@@ -3,70 +3,75 @@
 import requests
 import json
 import csv
+import time
 
-# Ask user for the company name and the API key of the company asking for commission deletion
-company_name = ""
-api_secret = str("")
-page_number = int(input("Enter page number: "))
+page_number = 20
+sleep_time = 5.00
+while page_number < 50:
+    # Ask user for the company name and the API key of the company asking for commission deletion
+    company_name = "COMPANY NAME"
+    api_secret = "API SECRET"
+    page_number += 1
+    # Initialize URL request variables
 
-# String Variable for file naming
-file_number = str(page_number)
+    # Use this line if the customer requests leads and conversions:
+    parameters = (("expand", "affiliate"), ("conversion_state[]", "conversion"), ("conversion_state[]", "lead"), ("page", page_number), ("limit", 100))
 
-# Initialize URL request variables
+    # Use this line if the customer requests conversions only:
+    # parameters = (("affiliate_id", affiliate), ("expand", "affiliate"), ("conversion_state[]", "conversion"), ("page", page_number), ("limit", 100))
 
-# Use this line if the customer requests leads and conversions:
-parameters = (("expand", "affiliate"), ("conversion_state[]", "conversion"), ("conversion_state[]", "lead"), ("page", page_number), ("limit", 100))
+    # Use this line if the customer requests leads only:
+    # parameters = (("expand", "affiliate"), ("conversion_state[]", "lead"), ("page", page_number), ("limit", 100))
+    api_key = (api_secret, "")
 
-# Use this line if the customer requests conversions only:
-# parameters = (("expand", "affiliate"), ("conversion_state[]", "conversion"), ("page", page_number), ("limit", 100))
-api_key = (api_secret, "")
+    # Get the list of referrals with a lead and conversion statuses,
+    # then write an output JSON file to keep as a log.
+    response = requests.get("https://api.getrewardful.com/v1/referrals", params=parameters, auth=api_key)
+    json_data = response.json()
 
-# Get the list of referrals with a lead and conversion statuses,
-# then write an output JSON file to keep as a log.
-response = requests.get("https://api.getrewardful.com/v1/referrals", params=parameters, auth=api_key)
-json_data = response.json()
+    with open(str(company_name) + "_ref_data.json", 'w+') as output:
+        dataformat = json.dumps(json_data, indent=2)
+        output.write(dataformat)
 
-with open(str(company_name) + "_ref_data.json", "w+", encoding="utf-8") as output:
-    dataformat = json.dumps(json_data, indent=2)
-    output.write(dataformat)
+    output.close()
 
-output.close()
+    print("Referral list JSON file created")
 
-print("Referral list JSON file created")
+    # Open JSON file
+    with open(company_name + "_ref_data.json", encoding="utf-8") as json_file:
+        output_data = json.load(json_file)
 
-# Open JSON file
-with open(company_name + "_ref_data.json") as json_file:
-    output_data = json.load(json_file)
+    # Create an empty list that would catch the dictionaries of each referral data
+    ref_output = []
 
-# Create an empty list that would catch the dictionaries of each referral data
-ref_output = []
+    # Load the json data in variable
+    referral_data = output_data["data"]
 
-# Load the json data in variable
-referral_data = output_data["data"]
+    # Iterate through the JSON variable and add them on a dictionary and append them to the empty list
+    for data in referral_data:
+        affiliate = dict(referral_id=data["id"],
+                         customer_email = data["customer"]["email"],
+                         customer_name = data["customer"]["name"],
+                         conversion_state = data["conversion_state"],
+                         became_lead_at = data["became_lead_at"],
+                         became_conversion_at = data["became_conversion_at"],
+                         affiliate_id = data["affiliate"]["id"],
+                         affiliate_first_name = data["affiliate"]["first_name"],
+                         affiliate_last_name = data["affiliate"]["last_name"],
+                         affiliate_email = data["affiliate"]["email"]
+                         )
+        ref_output.append(affiliate)
 
-# Iterate through the JSON variable and add them on a dictionary and append them to the empty list
-for data in referral_data:
-    affiliate = dict(referral_id=data["id"],
-                     conversion_state=data["conversion_state"],
-                     stripe_cust_id=data["customer"]["id"],
-                     cust_name=data["customer"]["name"],
-                     cust_email=data["customer"]["email"],
-                     affiliate_id=data["affiliate"]["id"],
-                     affiliate_first_name=data["affiliate"]["first_name"],
-                     affiliate_last_name=data["affiliate"]["last_name"],
-                     affiliate_email=data["affiliate"]["email"]
-                     )
-    ref_output.append(affiliate)
+    # Generate the keys of each dictionary
+    ref_keys = ref_output[0].keys()
 
-# Generate the keys of each dictionary
-ref_keys = ref_output[0].keys()
+    # Write the list of dictionaries into a CSV file
+    with open(company_name + "_referral_data.csv", "a", encoding="utf-8", newline="") as output_csv:
+        dict_writer = csv.DictWriter(output_csv, ref_keys)
+        dict_writer.writeheader()
+        dict_writer.writerows(ref_output)
 
-# Write the list of dictionaries into a CSV file
-with open(company_name + "_referral_data_" + file_number + ".csv", "w", encoding="utf-8", newline="") as output_csv:
-    dict_writer = csv.DictWriter(output_csv, ref_keys)
-    dict_writer.writeheader()
-    dict_writer.writerows(ref_output)
+    output_csv.close()
 
-output_csv.close()
-
-print("Referral CSV file created")
+    print("Referral data page " + str(page_number) + " added to CSV file.")
+    time.sleep(sleep_time)
