@@ -8,7 +8,7 @@ import time
 page_number = 20
 sleep_time = 5.00
 while page_number < 50:
-    # Ask user for the company name and the API key of the company asking for commission deletion
+    # Hard code the company name and API secret of the company
     company_name = "COMPANY NAME"
     api_secret = "API SECRET"
     page_number += 1
@@ -24,8 +24,7 @@ while page_number < 50:
     # parameters = (("expand", "affiliate"), ("conversion_state[]", "lead"), ("page", page_number), ("limit", 100))
     api_key = (api_secret, "")
 
-    # Get the list of referrals with a lead and conversion statuses,
-    # then write an output JSON file to keep as a log.
+    # Get the list of referrals with a lead and conversion statuses, then write an output JSON file to keep as a log.
     response = requests.get("https://api.getrewardful.com/v1/referrals", params=parameters, auth=api_key)
     json_data = response.json()
 
