@@ -66,3 +66,4 @@ while page_number < 50:
     output_csv.close()
 
     print("Payout data page " + str(page_number) + " added to CSV file.")
+    time.sleep(sleep_time)
