@@ -1,0 +1,20 @@
+Normally the script tags you'd paste onto your website would look like this:
+​﻿
+<script>(function(w,r){w._rwq=r;w[r]=w[r]||function(){(w[r].q=w[r].q||[]).push(arguments)}})(window,'rewardful');</script>
+<script async src='https://r.wdfl.co/rw.js' data-rewardful='YOUR API KEY'></script>
+
+That first script tag is the inline one that would require unsafe-inline, but there should be alternatives to that, such as using a nonce or hashing the content of the inline script.
+
+For example, using the nonce you should be able to have your CSP header do something like this:
+
+Content-Security-Policy: script-src 'nonce-2726c7f26c'
+And then use this for the script tag:
+
+<script nonce="2726c7f26c">(function(w,r){w._rwq=r;w[r]=w[r]||function(){(w[r].q=w[r].q||[]).push(arguments)}})(window,'rewardful');</script>
+If you want to use the hashing approach, you could have your CSP header specify a SHA256 hash of the script tag's contents.:
+
+Content-Security-Policy: script-src 'sha256-xsY0pjiwI0RKfqt6L8dkke7bHIMBpfl9gmU+s2ke68s='
+Here are some articles with more information on each approach:
+
+https://content-security-policy.com/nonce/
+https://content-security-policy.com/hash/
