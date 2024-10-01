@@ -1,3 +1,13 @@
+=== V2 script ===
+<script>
+$(document).ready(function(){
+    setTimeout(function() {
+        $('a[href^="https://buy.stripe.com/"]').attr('data-rewardful', '')
+          });
+    }, 2000);
+</script>
+
+=== V1 script ===
 <script>
 $(document).ready(function(){
     setTimeout(function() {
