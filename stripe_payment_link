@@ -2,6 +2,6 @@
 	setTimeout (function() {
 		let paymentLink = document.querySelectorAll('a[href^="https://buy.stripe.com/"]');
 		paymentLink.forEach(link => link.setAttribute('data-rewardful', ''));
-	}	, 2000
+	}, 2000
 );
 </script>
