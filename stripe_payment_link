@@ -1,22 +1,7 @@
-=== V2 script ===
 <script>
-$(document).ready(function(){
-    setTimeout(function() {
-        $('a[href^="https://buy.stripe.com/"]').attr('data-rewardful', '')
-          });
-    }, 2000);
-</script>
-
-=== V1 script ===
-<script>
-$(document).ready(function(){
-    setTimeout(function() {
-        $('a[href^="https://buy.stripe.com/"]').each(function(){
-            const oldBuyUrl = $(this).attr("href"); // Get current url
-            const referralId = Rewardful.referral;
-            const newBuyUrl = oldBuyUrl + "?client_reference_id=" + referralId; // Create new url
-            $(this).attr("href", newBuyUrl); // Set href value
-          });
-    }, 2000);
-});
+	setTimeout (function() {
+		let paymentLink = document.querySelectorAll('a[href^="https://buy.stripe.com/"]');
+		paymentLink.forEach(link => link.setAttribute('data-rewardful', ''));
+	}	, 2000
+);
 </script>
