@@ -1,7 +1,13 @@
 <script>
-setTimeout (function() {
-	let paymentLink = document.querySelectorAll('a[href^="https://buy.stripe.com/"]');
-	paymentLink.forEach(link => link.setAttribute('data-rewardful', ''));
-}, 2000
-);
+	setTimeout (function() {
+		let paymentLink = document.querySelectorAll('a[href^="https://buy.stripe.com/"]');
+		
+		// Adding the referral ID to the payment link
+		paymentLink.forEach(link => {
+			stripePaymentLink = link.getAttribute('href');
+			newPaymentLink = stripePaymentLink + '?client_reference_id=' + Rewardful.referral;
+			link.setAttribute('href', newPaymentLink);
+		});
+
+		}, 2000);
 </script>
